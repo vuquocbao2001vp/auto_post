@@ -10,30 +10,55 @@ export default function GroupsPage() {
   const [groups, setGroups] = useState<GroupRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [actionGroupId, setActionGroupId] = useState<string | null>(null);
 
   useEffect(() => {
-    const load = async () => {
-      try {
-        const supabase = getSupabaseBrowserClient();
-        const { data, error: requestError } = await supabase
-          .from("groups")
-          .select("id, url, label, status, created_at")
-          .order("created_at", { ascending: false });
-
-        if (requestError) {
-          throw requestError;
-        }
-
-        setGroups((data ?? []) as GroupRecord[]);
-      } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not load groups.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    void load();
+    void loadGroups();
   }, []);
+
+  const loadGroups = async () => {
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { data, error: requestError } = await supabase
+        .from("groups")
+        .select("id, url, label, status, created_at")
+        .order("created_at", { ascending: false });
+
+      if (requestError) {
+        throw requestError;
+      }
+
+      setGroups((data ?? []) as GroupRecord[]);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not load groups.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteGroup = async (groupId: string) => {
+    const confirmed = window.confirm("Delete this group? It will also be removed from linked schedules.");
+    if (!confirmed) {
+      return;
+    }
+
+    setActionGroupId(groupId);
+    setError(null);
+
+    try {
+      const supabase = getSupabaseBrowserClient();
+      const { error: deleteError } = await supabase.from("groups").delete().eq("id", groupId);
+      if (deleteError) {
+        throw deleteError;
+      }
+
+      setGroups((current) => current.filter((group) => group.id !== groupId));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Could not delete group.");
+    } finally {
+      setActionGroupId(null);
+    }
+  };
 
   return (
     <div className="stack">
@@ -63,6 +88,7 @@ export default function GroupsPage() {
                   <th>URL</th>
                   <th>Status</th>
                   <th>Created</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>
@@ -76,6 +102,21 @@ export default function GroupsPage() {
                       </span>
                     </td>
                     <td>{formatDateTime(group.created_at)}</td>
+                    <td>
+                      <div className="inline-actions">
+                        <Link href={`/groups/${group.id}/edit`} className="secondary-button">
+                          Edit
+                        </Link>
+                        <button
+                          type="button"
+                          className="ghost-button"
+                          disabled={actionGroupId === group.id}
+                          onClick={() => deleteGroup(group.id)}
+                        >
+                          {actionGroupId === group.id ? "Deleting..." : "Delete"}
+                        </button>
+                      </div>
+                    </td>
                   </tr>
                 ))}
               </tbody>

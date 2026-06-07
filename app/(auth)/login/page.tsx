@@ -56,7 +56,9 @@ export default function LoginPage() {
       }
 
       if (mode === "sign_up") {
-        setMessage("Account created. If email confirmation is enabled, confirm it before signing in.");
+        setMessage("Account created. You can sign in immediately.");
+        setMode("sign_in");
+        setPassword("");
       } else {
         router.replace(nextPath);
       }
