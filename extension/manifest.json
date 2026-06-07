@@ -1,0 +1,15 @@
+{
+  "manifest_version": 3,
+  "name": "Auto Post MVP",
+  "description": "Polls Supabase for due Facebook group posting jobs and publishes with the logged-in browser session.",
+  "version": "0.1.0",
+  "permissions": ["alarms", "storage", "tabs", "scripting"],
+  "host_permissions": ["https://*/*", "http://*/*"],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Auto Post MVP"
+  }
+}

@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Auto Post MVP</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <main class="popup">
+      <div class="header">
+        <span class="eyebrow">Chrome extension</span>
+        <h1>Auto Post MVP</h1>
+        <p>Sign in with the same Supabase account used in the dashboard.</p>
+      </div>
+
+      <form id="config-form" class="stack">
+        <label>
+          <span>Supabase URL</span>
+          <input id="supabase-url" type="url" placeholder="https://project.supabase.co" required />
+        </label>
+
+        <label>
+          <span>Supabase anon key</span>
+          <textarea id="supabase-anon-key" rows="3" placeholder="eyJ..." required></textarea>
+        </label>
+
+        <label>
+          <span>Email</span>
+          <input id="email" type="email" required />
+        </label>
+
+        <label>
+          <span>Password</span>
+          <input id="password" type="password" required />
+        </label>
+
+        <label>
+          <span>Browser ID</span>
+          <input id="browser-id" type="text" readonly />
+        </label>
+
+        <div class="actions">
+          <button id="sign-in-button" class="primary" type="submit">Sign in</button>
+          <button id="sign-out-button" class="secondary" type="button">Sign out</button>
+        </div>
+      </form>
+
+      <div class="actions">
+        <button id="poll-now-button" class="secondary" type="button">Run poll now</button>
+      </div>
+
+      <section class="status-panel">
+        <h2>Status</h2>
+        <div id="session-status" class="status">Checking local session...</div>
+        <div id="message" class="message"></div>
+      </section>
+    </main>
+
+    <script src="popup.js"></script>
+  </body>
+  </html>
